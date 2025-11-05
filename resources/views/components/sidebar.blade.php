@@ -289,6 +289,12 @@
                   <p>Add Custom Post</p>
                 </a>
               </li>
+            <li class="nav-item">
+                <a href="{{route('show-custom-posts')}}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Show Custom Post</p>
+                </a>
+              </li>
 
               <li class="nav-item">
                 <a href="{{route('add-post')}}" class="nav-link">
