@@ -106,39 +106,61 @@
               <!-- /.card-header -->
               <div class="card-body">
 <!------------------------------------------------->
-<form action="{{ route('insert_cp') }}" method="post" enctype="multipart/form-data">
+<form action="{{ route('insert_cp') }}" method="POST" enctype="multipart/form-data">
     @csrf
 
-    <div class="form-group">
-    <label for="type">Type:</label>
-    <select class="form-control" id="type" name="type" required onchange="toggleFileInput()">
-        <option value="">Select</option>
-        <option value="Image">Custom Image</option>
-        <option value="Video">Custom Video</option>
-      
-       
-    </select>
-</div>
+    {{-- Type --}}
+    <div class="form-group mt-3">
+        <label for="type">Select Type:</label>
+        <select name="type" class="form-control" required>
+            <option value="">-- Select Type --</option>
+            <option value="advertisement">Advertisement</option>
+            <option value="wishes">Wishes</option>
+        </select>
+    </div>
 
-<div class="form-group" id="imageInput" style="display: none;">
-    <label for="image">Image:</label>
-    <input type="file" class="form-control" id="image" name="image" accept="image/*" onchange="previewImage(event)">
-    <img id="imagePreview" src="" alt="Image Preview" style="display: none; margin-top: 10px; width: 20%; height: 200px;">
-</div>
+    {{-- Image Upload --}}
+    <div class="form-group mt-3">
+        <label for="image">Upload Image:</label>
+        <input type="file" name="image" class="form-control" required>
+    </div>
 
-<div class="form-group" id="videoInput" style="display: none;">
-    <label for="video">Video:</label>
-    <input type="file" class="form-control" id="video" name="video" accept="video/*">
-</div>
+    {{-- Text Size --}}
+    <div class="form-group mt-3">
+        <label for="text_size">Text Size:</label>
+        <select name="text_size" class="form-control" required>
+            <option value="2">2</option>
+            <option value="4">4</option>
+            <option value="6">6</option>
+            <option value="8">8</option>
+            <option value="10">10</option>
+        </select>
+    </div>
 
+    {{-- Text Color --}}
+    <div class="form-group mt-3">
+        <label for="text_color">Text Color:</label>
+        <select name="text_color" class="form-control" required>
+            <option value="black">Black</option>
+            <option value="white">White</option>
+            <option value="red">Red</option>
+            <option value="blue">Blue</option>
+            <option value="green">Green</option>
+        </select>
+    </div>
 
+    {{-- Text Position --}}
+    <div class="form-group mt-3">
+        <label for="text_position">Text Position:</label>
+        <select name="text_position" class="form-control" required>
+            <option value="1">Top</option>
+            <option value="2">Middle</option>
+        </select>
+    </div>
 
-
-
-
-
-    <button type="submit" class="btn btn-primary">Insert Post</button>
+    <button type="submit" class="btn btn-primary mt-4">Add Custom Post</button>
 </form>
+
 
 
 <!--------------------------------------------------->

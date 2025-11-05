@@ -43,7 +43,37 @@ class PostController extends Controller
     }
 
      # function to load custom Post
-   public function addCp()
+  
+
+#function to insert custom post
+// public function storeCustomPost(Request $request)
+// {
+//     $request->validate([
+//         'type' => 'required|string|max:255',
+//         'image' => 'required|image|max:2048', 
+//     ]);
+
+//     try {
+//         if ($request->hasFile('image')) {
+//             $image = $request->file('image');
+//             $imageName = time() . '.' . $image->getClientOriginalExtension();
+//             $image->move(public_path('uploads/images'), $imageName);
+//             $imagePath = url('uploads/images/' . $imageName); 
+//         } else {
+//             $imagePath = null;
+//         }
+
+//         $customPost = CustomPost::create([
+//             'type' => $request->type,
+//             'image' => $imagePath, 
+//         ]);
+
+//         return redirect()->back()->with('success', 'Custom post added successfully!');
+//     } catch (\Exception $e) {
+//         return redirect()->back()->withErrors(['error' => 'Failed to add custom post.'])->withInput();
+//     }
+// }
+ public function addCp()
    {
     // $categories = Category::where('active', 1  )->get();
     
@@ -51,37 +81,68 @@ class PostController extends Controller
 
   
    }
-
-#function to insert custom post
 public function storeCustomPost(Request $request)
 {
     $request->validate([
-        'type' => 'required|string|max:255',
-        'image' => 'required|image|max:2048', 
+        'type' => 'required|string|in:advertisement,wishes',
+        'image' => 'required|image|max:2048',
+        'text_size' => 'required|integer|in:2,4,6,8,10',
+        'text_color' => 'required|string|max:20',
+        'text_position' => 'required|integer|in:1,2',
     ]);
 
     try {
+        // ✅ Define storage path
+        $destinationPath = public_path('uploads/custom_posts');
+
+        // ✅ Create directory if it doesn’t exist
+        if (!file_exists($destinationPath)) {
+            mkdir($destinationPath, 0777, true);
+        }
+
+        // ✅ Save image
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('uploads/images'), $imageName);
-            $imagePath = url('uploads/images/' . $imageName); 
+            $image->move($destinationPath, $imageName);
+
+            // ✅ Create full URL (for DB storage)
+            $imagePath = url('uploads/custom_posts/' . $imageName);
         } else {
             $imagePath = null;
         }
 
-        $customPost = CustomPost::create([
+        // ✅ Save record in DB
+        CustomPost::create([
             'type' => $request->type,
-            'image' => $imagePath, 
+            'path_url' => $imagePath,   // full URL for frontend use
+            'image' => $imageName,      // only filename
+            'text_size' => $request->text_size,
+            'text_color' => $request->text_color,
+            'text_position' => $request->text_position,
         ]);
 
         return redirect()->back()->with('success', 'Custom post added successfully!');
     } catch (\Exception $e) {
-        return redirect()->back()->withErrors(['error' => 'Failed to add custom post.'])->withInput();
+        return redirect()->back()->withErrors([
+            'error' => 'Failed to add custom post: ' . $e->getMessage()
+        ])->withInput();
     }
 }
 
+public function showCustomPosts()
+{
+    $customPosts = CustomPost::orderBy('id', 'DESC')->get();
+    return view('post.showcp', compact('customPosts'));
+}
 
+    public function deleteCustomPost($id)
+    {
+        $customPost = CustomPost::findOrFail($id);
+        $customPost->delete();
+
+        return redirect()->route('show-custom-posts')->with('success', 'Custom post deleted successfully.');
+    }
 
    public function addPost()
    {

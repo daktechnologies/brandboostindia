@@ -10,9 +10,11 @@ use App\Http\Controllers\DistController;
 use App\Http\Controllers\CommonController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PlanController;
+use App\Http\Controllers\WebController;
 
 
 use App\Http\Controllers\Auth\RegisteredUserController;
+use PhpOffice\PhpSpreadsheet\Calculation\Web;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,10 +28,10 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 */
 
 Route::get('/', function () {
-    return redirect(route('login'));
+    return redirect(route('Web_App'));
 });
 
-
+Route::get('/Web-App',[WebController::class, 'webIndex'])->name('Web_App'); 
 Route::post('/logout', function () {
     Auth::logout();
     return redirect('/login');
@@ -86,8 +88,11 @@ Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('user.des
 Route::get('/show-post', [PostController::class, 'showPost'])->name('show-post');
 Route::get('/show-video', [PostController::class, 'showVideo'])->name('show-video');
 #add
-Route::get('/addCp', [PostController::class, 'addCp'])->name('addCp');
+Route::get('/add-custom-posts', [PostController::class, 'addCp'])->name('addCp');
 Route::post('/insert_cp', [PostController::class, 'storeCustomPost'])->name('insert_cp');
+
+Route::get('/show-custom-posts', [PostController::class, 'showCustomPosts'])->name('show-custom-posts');
+Route::delete('/custom-post-delete/{id}', [PostController::class, 'deleteCustomPost'])->name('custom-post-delete');
 
 Route::get('/add-post', [PostController::class, 'addPost'])->name('add-post');
 Route::post('/insert-post', [PostController::class, 'insertPost'])->name('insert-post');

@@ -27,7 +27,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/overlay-video/{id}', [ApiController::class, 'overlayOnPostVideo']);
 
 
-
 // for post methd get-api
 Route::post('/insert-category',[ApiController::class,'insertCategory']);
 Route::get('/categories', [ApiController::class, 'getAllCategory']);
@@ -42,10 +41,14 @@ Route::get('/get_user_status',[ApiController::class,'userStatus']);
 Route::post('add_post',[ApiController::class,'addPost']);  // custom post api
 Route::get('show_post',[ApiController::class,'show_post']);
 // Route::get('show_post_by_category',[ApiController::class,'show_post_by_category']);
+// Route::post('/custom-post', [ApiController::class, 'customPost']);
 Route::post('custom-post', [ApiController::class, 'customPost']);
 Route::get('show_custom_post/{id}', [ApiController::class, 'show_custom_post']);
 Route::put('/update_cp/{id}', [ApiController::class, 'updateCustomPost']);
 
+// custo posts
+
+Route::get('/get-custom-posts', [ApiController::class, 'getCustomPosts']);
 
 
 
