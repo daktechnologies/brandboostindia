@@ -27,7 +27,6 @@ jobs:
       - name: Copy files to AWS VM
         run: |
           rsync -avz \
-            --delete \
             --exclude='public' \
             --exclude='storage' \
             --exclude='.env' \
