@@ -477,26 +477,19 @@ class ApiController extends Controller
         'state' => $request->state,
     ];
 
-    // Handle profile_logo upload if present
     if ($request->hasFile('profile_logo')) {
         $file = $request->file('profile_logo');
 
-        // Define folder path relative to storage/app/public
         $folderPath = 'logo';
 
-        // Store the file and get the relative path
-        $path = $file->store($folderPath, 'public');  // uses 'public' disk
-
-        // Save the stored path in the data array
-        $data['profile_logo'] = $path;  // e.g. videos/plogo/filename.jpg
+        $path = $file->store($folderPath, 'public');  
+        $data['profile_logo'] = $path;  
     }
 
     if ($profile) {
-        // Update existing profile
         $profile->update($data);
         $message = "Profile updated.";
     } else {
-        // Create new profile
         $data['user_id'] = $request->user_id;
         $profile = Profile::create($data);
         $message = "Profile created.";
@@ -521,42 +514,91 @@ class ApiController extends Controller
 
 
             #function for get profile
-            public function getProfile($id)
-            {
-                try{
-                $profile = Profile::where('user_id', $id)->first();
+            // public function getProfile($id)
+            // {
+            //     try{
+            //     $profile = Profile::where('user_id', $id)->first();
 
-                if (!$profile) {
-                    return response()->json([
-                        'status' => 'False',
-                        'errorMsg' => 'Profile not found for the given user_id',
-                    ], 404);
-                }
+            //     if (!$profile) {
+            //         return response()->json([
+            //             'status' => 'False',
+            //             'errorMsg' => 'Profile not found for the given user_id',
+            //         ], 404);
+            //     }
              
-                $data = [
-                    'id' => $profile->id,
-                    'type' => $profile->type,
-                    'profile_logo' => $profile->profile_logo,
-                    'whatsappno' => $profile->whatsappno,
-                    'website' => $profile->website,
-                    'instagram_facebook' => $profile->instagram_facebook,
-                    'bussiness_name' => $profile->bussiness_name,
-                    'tagline' => $profile->tagline,
-                    'state' => $profile->state,
-                    'city' => $profile->city,
-                    'address' => $profile->address,
-                ];
+            //     $data = [
+            //         'id' => $profile->id,
+            //         'type' => $profile->type,
+            //         'profile_logo' => $profile->profile_logo,
+            //         'whatsappno' => $profile->whatsappno,
+            //         'website' => $profile->website,
+            //         'instagram_facebook' => $profile->instagram_facebook,
+            //         'bussiness_name' => $profile->bussiness_name,
+            //         'tagline' => $profile->tagline,
+            //         'state' => $profile->state,
+            //         'city' => $profile->city,
+            //         'address' => $profile->address,
+            //     ];
             
-                return response()->json([
-                    'status' => 'True',
-                    'data' => $data,
-                ], 200, [], JSON_NUMERIC_CHECK);
-                }catch(Exception $e){
-                $result=array('status'=>false,'message'=>"API failed.",'error'=>$e->getMessage());
-                return response()->json($result,500);
-               }
+            //     return response()->json([
+            //         'status' => 'True',
+            //         'data' => $data,
+            //     ], 200, [], JSON_NUMERIC_CHECK);
+            //     }catch(Exception $e){
+            //     $result=array('status'=>false,'message'=>"API failed.",'error'=>$e->getMessage());
+            //     return response()->json($result,500);
+            //    }
                 
-            }
+            // }
+            public function getProfile($id)
+{
+    try {
+        $profile = Profile::where('user_id', $id)->first();
+
+        if (!$profile) {
+            return response()->json([
+                'status' => 'False',
+                'errorMsg' => 'Profile not found for the given user_id',
+            ], 404);
+        }
+
+        // ✅ Base URL for storage
+        $baseUrl = 'https://brandboostindia.com/storage/';
+
+        // ✅ If profile_logo exists, prepend base URL
+        $profileLogo = $profile->profile_logo
+            ? $baseUrl . $profile->profile_logo
+            : null;
+
+        $data = [
+            'id' => $profile->id,
+            'type' => $profile->type,
+            'profile_logo' => $profileLogo,
+            'whatsappno' => $profile->whatsappno,
+            'website' => $profile->website,
+            'instagram_facebook' => $profile->instagram_facebook,
+            'bussiness_name' => $profile->bussiness_name,
+            'tagline' => $profile->tagline,
+            'state' => $profile->state,
+            'city' => $profile->city,
+            'address' => $profile->address,
+        ];
+
+        return response()->json([
+            'status' => 'True',
+            'data' => $data,
+        ], 200, [], JSON_NUMERIC_CHECK);
+
+    } catch (Exception $e) {
+        $result = [
+            'status' => false,
+            'message' => "API failed.",
+            'error' => $e->getMessage()
+        ];
+        return response()->json($result, 500);
+    }
+}
+
             
             #function for edit profile
             public function updateProfile(Request $request, $id)
