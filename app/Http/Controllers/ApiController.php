@@ -455,12 +455,72 @@ class ApiController extends Controller
     // }
 
             #function for add profile
-        public function addProfile(Request $request)
+//         public function addProfile(Request $request)
+// {
+//     $request->validate([
+//         'user_id' => 'required|integer',
+//         'profile_logo' => 'nullable|file|mimes:jpeg,png,jpg,gif|max:2048', // validate image upload
+//         // you can add other validations as needed for other fields
+//     ]);
+
+//     $profile = Profile::where('user_id', $request->user_id)->first();
+
+//     $data = [
+//         'type' => $request->type,
+//         'whatsappno' => $request->whatsappno,
+//         'website' => $request->website,
+//         'instagram_facebook' => $request->instagram_facebook,
+//         'bussiness_name' => $request->bussiness_name,
+//         'tagline' => $request->tagline,
+//         'address' => $request->address,
+//         'city' => $request->city,
+//         'state' => $request->state,
+//     ];
+
+//     // Handle profile_logo upload if present
+//     if ($request->hasFile('profile_logo')) {
+//         $file = $request->file('profile_logo');
+
+//         // Define folder path relative to storage/app/public
+//         $folderPath = 'logo';
+
+//         // Store the file and get the relative path
+//         $path = $file->store($folderPath, 'public');  // uses 'public' disk
+
+//         // Save the stored path in the data array
+//         $data['profile_logo'] = $path;  // e.g. videos/plogo/filename.jpg
+//     }
+
+//     if ($profile) {
+//         // Update existing profile
+//         $profile->update($data);
+//         $message = "Profile updated.";
+//     } else {
+//         // Create new profile
+//         $data['user_id'] = $request->user_id;
+//         $profile = Profile::create($data);
+//         $message = "Profile created.";
+//     }
+
+//     if ($profile) {
+//         return response()->json([
+//             'status' => true,
+//             'message' => $message,
+//             'data' => $profile
+//         ], 200);
+//     } else {
+//         return response()->json([
+//             'status' => false,
+//             'message' => "Something went wrong."
+//         ], 400);
+//     }
+// }
+public function addProfile(Request $request)
 {
     $request->validate([
         'user_id' => 'required|integer',
-        'profile_logo' => 'nullable|file|mimes:jpeg,png,jpg,gif|max:2048', // validate image upload
-        // you can add other validations as needed for other fields
+        'profile_logo' => 'nullable|file|mimes:jpeg,png,jpg,gif|max:2048',
+        
     ]);
 
     $profile = Profile::where('user_id', $request->user_id)->first();
@@ -481,14 +541,22 @@ class ApiController extends Controller
     if ($request->hasFile('profile_logo')) {
         $file = $request->file('profile_logo');
 
-        // Define folder path relative to storage/app/public
-        $folderPath = 'logo';
+        // Define absolute folder path
+        $folderPath = 'C:\xampp\htdocs\BB_Admin\BB_New\brandboostindia\storage\app\public\logo';
 
-        // Store the file and get the relative path
-        $path = $file->store($folderPath, 'public');  // uses 'public' disk
+        // Ensure directory exists
+        if (!file_exists($folderPath)) {
+            mkdir($folderPath, 0777, true);
+        }
 
-        // Save the stored path in the data array
-        $data['profile_logo'] = $path;  // e.g. videos/plogo/filename.jpg
+        // Generate unique file name
+        $fileName = time() . '_' . $file->getClientOriginalName();
+
+        // Move file to given path
+        $file->move($folderPath, $fileName);
+
+        // Save the stored absolute path in the data array
+        $data['profile_logo'] = $folderPath . '\\' . $fileName; // use double backslash for full path
     }
 
     if ($profile) {
